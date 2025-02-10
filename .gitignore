@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+/.vs
+/InkeysTimeout/Release
+/InkeysTimeout/x64/Debug
+/Release
+/x64/Debug
+/InkeysTimeout/InkeysTimeout.aps
