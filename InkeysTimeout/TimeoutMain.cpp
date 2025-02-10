@@ -330,6 +330,12 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 		DeleteObject(hBrush);
 		return 1;
 	}
+	case WM_CLOSE:
+		if (timer.start) {
+			if (MessageBox(hwNd, L"当前正在计时, 退出将无法计时, 是否退出? ", L"提示", MB_ICONQUESTION | MB_YESNO) == IDNO) return 0;
+			else DestroyWindow(hwNd);
+		} else DestroyWindow(hwNd);
+		break;
 	case WM_DESTROY: {
 		PostQuitMessage(0);
 		break;
