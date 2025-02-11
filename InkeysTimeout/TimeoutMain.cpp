@@ -20,6 +20,7 @@ struct Timer {
 } timer{false, Countdown};
 bool isSettingShow = false;
 bool isPaused = false;
+float UIZoom = 1.0f;
 #define ID_TIMER 1145
 
 #define TIME_LABEL 1001
@@ -66,89 +67,89 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	case WM_CREATE: {
 		SetWindowPos(hwNd, HWND_TOPMOST, 0, 0, 100, 100, SWP_NOMOVE | SWP_NOSIZE);
 		{
-			HWND hwnd = CreateWindow(L"static", L"00:01:00", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 0, 185, 640, 70, hwNd, (HMENU)TIME_LABEL, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 75)));
+			HWND hwnd = CreateWindow(L"static", L"00:01:00", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 0 * UIZoom, 185 * UIZoom, 640 * UIZoom, 70 * UIZoom, hwNd, (HMENU)TIME_LABEL, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 75 * UIZoom)));
 		}
 		{
 			// 小时
 			{
-				HWND hwnd = CreateWindow(L"button", L"小时 +1", WS_CHILD | BS_CENTER | SS_CENTER, 170, 150, 80, 35, hwNd, (HMENU)HOURS_PLUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"小时 +1", WS_CHILD | BS_CENTER | SS_CENTER, 170 * UIZoom, 150 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)HOURS_PLUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"小时 +5", WS_CHILD | BS_CENTER | SS_CENTER, 170, 110, 80, 35, hwNd, (HMENU)HOURS_PLUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"小时 +5", WS_CHILD | BS_CENTER | SS_CENTER, 170 * UIZoom, 110 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)HOURS_PLUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"小时 -1", WS_CHILD | BS_CENTER | SS_CENTER, 170, 260, 80, 35, hwNd, (HMENU)HOURS_MINUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"小时 -1", WS_CHILD | BS_CENTER | SS_CENTER, 170 * UIZoom, 260 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)HOURS_MINUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"小时 -5", WS_CHILD | BS_CENTER | SS_CENTER, 170, 300, 80, 35, hwNd, (HMENU)HOURS_MINUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"小时 -5", WS_CHILD | BS_CENTER | SS_CENTER, 170 * UIZoom, 300 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)HOURS_MINUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 		}
 		{
 			// 分钟
 			{
-				HWND hwnd = CreateWindow(L"button", L"分钟 +1", WS_CHILD | BS_CENTER | SS_CENTER, 280, 150, 80, 35, hwNd, (HMENU)MINUTE_PLUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"分钟 +1", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 150 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)MINUTE_PLUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"分钟 +5", WS_CHILD | BS_CENTER | SS_CENTER, 280, 110, 80, 35, hwNd, (HMENU)MINUTE_PLUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"分钟 +5", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 110 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)MINUTE_PLUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"分钟 -1", WS_CHILD | BS_CENTER | SS_CENTER, 280, 260, 80, 35, hwNd, (HMENU)MINUTE_MINUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"分钟 -1", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 260 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)MINUTE_MINUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"分钟 -5", WS_CHILD | BS_CENTER | SS_CENTER, 280, 300, 80, 35, hwNd, (HMENU)MINUTE_MINUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"分钟 -5", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 300 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)MINUTE_MINUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 		}
 		{
 			// 秒钟
 			{
-				HWND hwnd = CreateWindow(L"button", L"秒钟 +1", WS_CHILD | BS_CENTER | SS_CENTER, 390, 150, 80, 35, hwNd, (HMENU)SECOND_PLUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"秒钟 +1", WS_CHILD | BS_CENTER | SS_CENTER, 390 * UIZoom, 150 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)SECOND_PLUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"秒钟 +5", WS_CHILD | BS_CENTER | SS_CENTER, 390, 110, 80, 35, hwNd, (HMENU)SECOND_PLUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"秒钟 +5", WS_CHILD | BS_CENTER | SS_CENTER, 390 * UIZoom, 110 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)SECOND_PLUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"秒钟 -1", WS_CHILD | BS_CENTER | SS_CENTER, 390, 260, 80, 35, hwNd, (HMENU)SECOND_MINUS1, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"秒钟 -1", WS_CHILD | BS_CENTER | SS_CENTER, 390 * UIZoom, 260 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)SECOND_MINUS1, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 			{
-				HWND hwnd = CreateWindow(L"button", L"秒钟 -5", WS_CHILD | BS_CENTER | SS_CENTER, 390, 300, 80, 35, hwNd, (HMENU)SECOND_MINUS5, GetModuleHandle(0), NULL);
-				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+				HWND hwnd = CreateWindow(L"button", L"秒钟 -5", WS_CHILD | BS_CENTER | SS_CENTER, 390 * UIZoom, 300 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)SECOND_MINUS5, GetModuleHandle(0), NULL);
+				Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 			}
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"保存", WS_CHILD | BS_CENTER | SS_CENTER, 280, 360, 80, 35, hwNd, (HMENU)SAVE, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"保存", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 360 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)SAVE, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"开始 (倒计时)", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 190, 360, 120, 35, hwNd, (HMENU)START_CONUTDOWN, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"开始 (倒计时)", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 190 * UIZoom, 360 * UIZoom, 120 * UIZoom, 35 * UIZoom, hwNd, (HMENU)START_CONUTDOWN, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"开始 (正计时)", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 330, 360, 120, 35, hwNd, (HMENU)START_CONUTUP, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"开始 (正计时)", WS_CHILD | WS_VISIBLE | BS_CENTER | SS_CENTER, 330 * UIZoom, 360 * UIZoom, 120 * UIZoom, 35 * UIZoom, hwNd, (HMENU)START_CONUTUP, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"暂停", WS_CHILD | BS_CENTER | SS_CENTER, 170, 360, 80, 35, hwNd, (HMENU)PAUSE, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"暂停", WS_CHILD | BS_CENTER | SS_CENTER, 170 * UIZoom, 360 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)PAUSE, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"重启", WS_CHILD | BS_CENTER | SS_CENTER, 280, 360, 80, 35, hwNd, (HMENU)RESET, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"重启", WS_CHILD | BS_CENTER | SS_CENTER, 280 * UIZoom, 360 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)RESET, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		{
-			HWND hwnd = CreateWindow(L"button", L"停止", WS_CHILD | BS_CENTER | SS_CENTER, 390, 360, 80, 35, hwNd, (HMENU)STOP, GetModuleHandle(0), NULL);
-			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15)));
+			HWND hwnd = CreateWindow(L"button", L"停止", WS_CHILD | BS_CENTER | SS_CENTER, 390 * UIZoom, 360 * UIZoom, 80 * UIZoom, 35 * UIZoom, hwNd, (HMENU)STOP, GetModuleHandle(0), NULL);
+			Controls.push_back(make_pair(hwnd, new Win32FontManager(hwnd, 15 * UIZoom)));
 		}
 		break;
 	}
@@ -347,6 +348,42 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+	list<wstring> args;
+	{
+		LPWSTR* szArgList;
+		int argCount;
+
+
+		szArgList = CommandLineToArgvW(GetCommandLine(), &argCount);
+
+		if (szArgList != NULL)
+			for (int i = 1; i < argCount; i++)
+			{
+				args.push_back(wstring(szArgList[i]));
+			}
+		LocalFree(szArgList);
+	}
+
+	{
+		auto it = std::find(args.begin(), args.end(), L"/Z");
+		if (it != args.end() && std::next(it) != args.end()) {
+			std::wstring zoom = *std::next(it);
+			int Zoom = 0;
+			for (int i = 0; i < zoom.length(); i++) {
+				if (zoom[i] > '9' || zoom[i] < '0')
+					break;
+				else {
+					Zoom *= 10;
+					Zoom += zoom[i] - '0';
+				}
+			}
+		    UIZoom = 1.0 * Zoom / 100.0;
+			if (UIZoom > 2.0) UIZoom = 2.0;
+			if (UIZoom < 1.0) UIZoom = 1.0;
+			//MessageBox(NULL, to_wstring(UIZoom).c_str(), L"提示", NULL);
+		}
+	}
+
 	WNDCLASSEX wc;
 	MSG Msg;
 
@@ -361,7 +398,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		MessageBox(NULL, L"Window Registration Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
 	}
-	int Width = 640, Height = 480, x, y;
+	int Width = 640 * UIZoom, Height = 480 * UIZoom, x, y;
 	{
 		int ScreenWidth = GetSystemMetrics(SM_CXFULLSCREEN), ScreenHeight = GetSystemMetrics(SM_CYFULLSCREEN);
 		x = (ScreenWidth - Width) / 2;
