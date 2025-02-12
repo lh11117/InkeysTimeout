@@ -388,8 +388,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		auto it = std::find(args.begin(), args.end(), L"/L");
 		if (it != args.end() && std::next(it) != args.end()) {
 			std::wstring language = *std::next(it);
-			if (language == L"zh") loadI18n(IDR_JSON1);
-			else loadI18n(IDR_JSON3);      // 指定语言不存在
+			if (language == L"cn") loadI18n(IDR_JSON1);       // 中文简体
+			else if (language == L"tw") loadI18n(IDR_JSON2);  // 中文繁体
+			else loadI18n(IDR_JSON3);                         // 指定语言不存在或指定的就是英文，默认加载英文
 		}
 		else loadI18n(IDR_JSON1);
 	}

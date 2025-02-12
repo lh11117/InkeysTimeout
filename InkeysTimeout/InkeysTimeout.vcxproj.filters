@@ -100,13 +100,16 @@
     </Media>
   </ItemGroup>
   <ItemGroup>
-    <None Include="i18n\zh-hans.json">
+    <None Include="i18n\zh-cn.json">
       <Filter>资源文件\i18n</Filter>
     </None>
     <None Include="json\lib_json\json_valueiterator.inl">
       <Filter>JsonCpp</Filter>
     </None>
     <None Include="i18n\en-us.json">
+      <Filter>资源文件\i18n</Filter>
+    </None>
+    <None Include="i18n\zh-tw.json">
       <Filter>资源文件\i18n</Filter>
     </None>
   </ItemGroup>

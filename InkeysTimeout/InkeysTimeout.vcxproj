@@ -163,7 +163,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="i18n\en-us.json" />
-    <None Include="i18n\zh-hans.json" />
+    <None Include="i18n\zh-cn.json" />
+    <None Include="i18n\zh-tw.json" />
     <None Include="json\lib_json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
