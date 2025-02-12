@@ -91,6 +91,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -128,10 +129,26 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="i18n.cpp" />
+    <ClCompile Include="json\lib_json\json_reader.cpp" />
+    <ClCompile Include="json\lib_json\json_value.cpp" />
+    <ClCompile Include="json\lib_json\json_writer.cpp" />
     <ClCompile Include="TimeoutMain.cpp" />
     <ClCompile Include="Win32FontManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="i18n.h" />
+    <ClInclude Include="json\allocator.h" />
+    <ClInclude Include="json\assertions.h" />
+    <ClInclude Include="json\config.h" />
+    <ClInclude Include="json\forwards.h" />
+    <ClInclude Include="json\json.h" />
+    <ClInclude Include="json\json_features.h" />
+    <ClInclude Include="json\lib_json\json_tool.h" />
+    <ClInclude Include="json\reader.h" />
+    <ClInclude Include="json\value.h" />
+    <ClInclude Include="json\version.h" />
+    <ClInclude Include="json\writer.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="Win32FontManager.h" />
   </ItemGroup>
@@ -143,6 +160,11 @@
   </ItemGroup>
   <ItemGroup>
     <Media Include="TimerDownNotice.wav" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="i18n\en-us.json" />
+    <None Include="i18n\zh-hans.json" />
+    <None Include="json\lib_json\json_valueiterator.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
