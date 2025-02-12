@@ -254,7 +254,7 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			break;
 	    case PAUSE: 
 			isPaused = !isPaused;
-			if (isPaused) SetWindowTextA(at(Controls, 16).first, i18n_get("cintinue").c_str());
+			if (isPaused) SetWindowTextA(at(Controls, 16).first, i18n_get("continue").c_str());
 			else SetWindowTextA(at(Controls, 16).first, i18n_get("pause").c_str());
 			break;
 		}
@@ -414,7 +414,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		x = (ScreenWidth - Width) / 2;
 		y = (ScreenHeight - Height) / 2;
 	}
-	hWnd = CreateWindowEx(WS_EX_CLIENTEDGE, wc.lpszClassName, L"Loading...", WS_VISIBLE | WS_CAPTION | WS_POPUPWINDOW, x, y, Width, Height, NULL, NULL, hInstance, NULL);
+	hWnd = CreateWindowEx(WS_EX_CLIENTEDGE, wc.lpszClassName, L"InkeysApp", WS_VISIBLE | WS_CAPTION | WS_POPUPWINDOW, x, y, Width, Height, NULL, NULL, hInstance, NULL);
 	if (hWnd == NULL) {
 		MessageBox(NULL, L"Window Creation Failed!", L"Error!", MB_ICONEXCLAMATION | MB_OK);
 		return 0;
