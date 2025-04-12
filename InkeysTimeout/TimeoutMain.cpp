@@ -7,13 +7,16 @@
 #include "Win32FontManager.h"
 #include <mmsystem.h>
 #include "i18n.h"
+#include <chrono>
 #pragma comment (lib,"winmm.lib")
+
 using namespace std;
+
 HWND hWnd;
 list<pair<HWND, Win32FontManager*>> Controls;
 struct Time {
 	int h, m, s;
-} time{ 0,1,0 }, countup_time{ 0,0,0 }, countdown_time{ 0,0,0 };
+} timer_time{ 0,1,0 }, countup_time{ 0,0,0 }, countdown_time{ 0,0,0 };
 enum TimerEnum { Countdown, Countup };
 struct Timer {
 	bool start;
@@ -22,6 +25,9 @@ struct Timer {
 bool isSettingShow = false;
 bool isPaused = false;
 float UIZoom = 1.0f;
+int TimerDelay = 0;
+int TimerBeginTime = 0;  // 计时开始时那一时刻的毫秒
+int getNowMillsecond();
 #define ID_TIMER 1145
 
 #define TIME_LABEL 1001
@@ -48,7 +54,7 @@ float UIZoom = 1.0f;
 #define RESET 1018
 #define STOP 1019
 
-#define UPDATE_TIME SetWindowText(at(Controls, 0).first, ((to_wstring(time.h).length() == 1 ? L"0" : L"") + to_wstring(time.h) + L":" + (to_wstring(time.m).length() == 1 ? L"0" : L"") + to_wstring(time.m) + L":" + (to_wstring(time.s).length() == 1 ? L"0" : L"") + to_wstring(time.s)).c_str());
+#define UPDATE_TIME SetWindowText(at(Controls, 0).first, ((to_wstring(timer_time.h).length() == 1 ? L"0" : L"") + to_wstring(timer_time.h) + L":" + (to_wstring(timer_time.m).length() == 1 ? L"0" : L"") + to_wstring(timer_time.m) + L":" + (to_wstring(timer_time.s).length() == 1 ? L"0" : L"") + to_wstring(timer_time.s)).c_str());
 #define UPDATE_TIME_COUNTUP SetWindowText(at(Controls, 0).first, ((to_wstring(countup_time.h).length() == 1 ? L"0" : L"") + to_wstring(countup_time.h) + L":" + (to_wstring(countup_time.m).length() == 1 ? L"0" : L"") + to_wstring(countup_time.m) + L":" + (to_wstring(countup_time.s).length() == 1 ? L"0" : L"") + to_wstring(countup_time.s)).c_str());
 #define UPDATE_TIME_COUNTDOWN SetWindowText(at(Controls, 0).first, ((to_wstring(countdown_time.h).length() == 1 ? L"0" : L"") + to_wstring(countdown_time.h) + L":" + (to_wstring(countdown_time.m).length() == 1 ? L"0" : L"") + to_wstring(countdown_time.m) + L":" + (to_wstring(countdown_time.s).length() == 1 ? L"0" : L"") + to_wstring(countdown_time.s)).c_str());
 
@@ -164,51 +170,53 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 					ShowWindow(at(Controls, i + 1).first, isSettingShow ? SW_SHOW : SW_HIDE);
 				for (int i = 13; i < 15; i++)
 					ShowWindow(at(Controls, i + 1).first, !isSettingShow ? SW_SHOW : SW_HIDE);
-				if (!(time.h || time.m || time.s)) time.s = 1;
+				if (!(timer_time.h || timer_time.m || timer_time.s)) timer_time.s = 1;
 			}
 			break;
 		}
 		case HOURS_PLUS1:
-			time.h++;
+			timer_time.h++;
 			break;
 		case HOURS_PLUS5:
-			time.h += 5;
+			timer_time.h += 5;
 			break;
 		case HOURS_MINUS1:
-			time.h--;
+			timer_time.h--;
 			break;
 		case HOURS_MINUS5:
-			time.m -= 5;
+			timer_time.m -= 5;
 			break;
 		case MINUTE_PLUS1:
-			time.m++;
+			timer_time.m++;
 			break;
 		case MINUTE_PLUS5:
-			time.m += 5;
+			timer_time.m += 5;
 			break;
 		case MINUTE_MINUS1:
-			time.m--;
+			timer_time.m--;
 			break;
 		case MINUTE_MINUS5:
-			time.m -= 5;
+			timer_time.m -= 5;
 			break;
 		case SECOND_PLUS1:
-			time.s++;
+			timer_time.s++;
 			break;
 		case SECOND_PLUS5:
-			time.s += 5;
+			timer_time.s += 5;
 			break;
 		case SECOND_MINUS1:
-			time.s--;
+			timer_time.s--;
 			break;
 		case SECOND_MINUS5:
-			time.s -= 5;
+			timer_time.s -= 5;
 			break;
 		case START_CONUTDOWN:
 			if (!isSettingShow && !timer.start) {
-				countdown_time = time;
+				countdown_time = timer_time;
 				timer.start = true;
 				isPaused = false;
+				TimerDelay = 0;
+				TimerBeginTime = getNowMillsecond();
 				SetWindowTextA(at(Controls, 16).first, i18n_get("pause").c_str());
 				timer.mode = Countdown;
 				SetTimer(hwNd, ID_TIMER, 1000, NULL);
@@ -223,6 +231,8 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 				countup_time = { 0,0,0 };
 				timer.start = true;
 				isPaused = false;
+				TimerDelay = 0;
+				TimerBeginTime = getNowMillsecond();
 				SetWindowTextA(at(Controls, 16).first, i18n_get("pause").c_str());
 				timer.mode = Countup;
 				UPDATE_TIME_COUNTUP;
@@ -248,23 +258,31 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 			break;
 	    case RESET:
 			if (!isSettingShow && timer.start) {
-				if (timer.mode == Countdown) { countdown_time = time; UPDATE_TIME_COUNTDOWN; }
+				if (timer.mode == Countdown) { countdown_time = timer_time; UPDATE_TIME_COUNTDOWN; }
 				else { countup_time = { 0,0,0 }; UPDATE_TIME_COUNTUP; }
 			}
 			break;
 	    case PAUSE: 
 			isPaused = !isPaused;
-			if (isPaused) SetWindowTextA(at(Controls, 16).first, i18n_get("continue").c_str());
-			else SetWindowTextA(at(Controls, 16).first, i18n_get("pause").c_str());
+			if (isPaused) 
+			{
+				SetWindowTextA(at(Controls, 16).first, i18n_get("continue").c_str()); 
+				TimerDelay = (getNowMillsecond() - TimerBeginTime + 1000) % 1000;
+				KillTimer(hwNd, ID_TIMER);
+			}
+			else { 
+				SetWindowTextA(at(Controls, 16).first, i18n_get("pause").c_str());
+				SetTimer(hwNd, ID_TIMER, TimerDelay, NULL);
+			}
 			break;
 		}
 
-		if (time.h < 0) time.h = 100 + time.h % 100;
-		if (time.h >= 100) time.h %= 100;
-		if (time.m < 0) time.m = 60 + time.m % 60;
-		if (time.m >= 60) time.m %= 60;
-		if (time.s < 0) time.s = 60 + time.s % 60;
-		if (time.s >= 60) time.s %= 60;
+		if (timer_time.h < 0) timer_time.h = 100 + timer_time.h % 100;
+		if (timer_time.h >= 100) timer_time.h %= 100;
+		if (timer_time.m < 0) timer_time.m = 60 + timer_time.m % 60;
+		if (timer_time.m >= 60) timer_time.m %= 60;
+		if (timer_time.s < 0) timer_time.s = 60 + timer_time.s % 60;
+		if (timer_time.s >= 60) timer_time.s %= 60;
 
 		if (!timer.start) { UPDATE_TIME; }
 		break;
@@ -278,6 +296,11 @@ LRESULT CALLBACK WndProc(HWND hwNd, UINT Message, WPARAM wParam, LPARAM lParam) 
 	}
 	case WM_TIMER: {
 		if (LOWORD(wParam) == ID_TIMER && timer.start && !isPaused) {
+			if (TimerDelay != 0) {
+				KillTimer(hwNd, ID_TIMER);
+				TimerDelay = 0;
+				SetTimer(hwNd, ID_TIMER, 1000, NULL);
+			}
 			if(timer.mode == Countdown) {
 				countdown_time.s--;
 				if (countdown_time.s < 0) {
@@ -427,4 +450,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		DispatchMessage(&Msg);
 	}
 	return Msg.wParam;
+}
+
+int getNowMillsecond()
+{
+	auto now = std::chrono::system_clock::now();
+	return (std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000).count();
 }
